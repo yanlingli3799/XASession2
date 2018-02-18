@@ -94,6 +94,11 @@ public class XRelation implements Relation {
                 return null;
             }
 		}
+
+		@Override
+		public Object[] get() {
+			return this.rowData;
+		}
 	}
 
 	public static class XRowIterator implements RowIterator{

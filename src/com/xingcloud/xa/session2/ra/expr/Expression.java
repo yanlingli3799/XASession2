@@ -1,5 +1,6 @@
 package com.xingcloud.xa.session2.ra.expr;
 
+import com.xingcloud.xa.session2.ra.Relation;
 import com.xingcloud.xa.session2.ra.Row;
 
 /**

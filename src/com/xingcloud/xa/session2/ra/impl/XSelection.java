@@ -1,7 +1,17 @@
 package com.xingcloud.xa.session2.ra.impl;
 
 import com.xingcloud.xa.session2.ra.*;
+import com.xingcloud.xa.session2.ra.expr.And;
+import com.xingcloud.xa.session2.ra.expr.Equals;
 import com.xingcloud.xa.session2.ra.expr.Expression;
+import com.xingcloud.xa.session2.ra.expr.Greater;
+import com.xingcloud.xa.session2.ra.expr.GreaterEqual;
+import com.xingcloud.xa.session2.ra.expr.Less;
+import com.xingcloud.xa.session2.ra.expr.LessEqual;
+import com.xingcloud.xa.session2.ra.expr.Not;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author: mulisen
@@ -12,6 +22,13 @@ public class XSelection extends AbstractOperation implements Selection{
 	RelationProvider relation;
 	Expression expression;
 
+	public XSelection() {
+	}
+
+	public XSelection(RelationProvider relation, Expression expression) {
+		setInput(relation,expression);
+	}
+
 	public Selection setInput(RelationProvider relation, Expression e) {
 		resetInput();
 		this.relation = relation;
@@ -21,7 +38,28 @@ public class XSelection extends AbstractOperation implements Selection{
 	}
 
 	public Relation evaluate() {
-		return null;  //TODO method implementation
+		RowIterator iterator = relation.iterator();
+		List<Object[]> rows = new ArrayList<Object[]>();
+
+		while(iterator.hasNext()){
+			Row row = iterator.nextRow();
+			// 等于、不等于、大于、大于等于、小于、小于等于、And、Or
+			if(expression instanceof Equals
+				 || expression instanceof Not
+				 || expression instanceof Greater
+				 || expression instanceof GreaterEqual
+				 || expression instanceof Less
+				 || expression instanceof LessEqual
+				 || expression instanceof And){
+				if((Boolean) expression.evaluate(row)){
+					rows.add(row.get());
+				}
+			}else{
+				throw new IllegalArgumentException("XSelection 的 expression 不支持："+expression);
+			}
+		}
+
+		return new XRelation(relation.getColumnIndex(),rows);
 	}
 
 	@Override

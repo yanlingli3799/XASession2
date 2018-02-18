@@ -15,7 +15,13 @@ public class XSum extends AbstractAggregation implements Sum {
 
 	RelationProvider relation;
 	String columnName;
-	Double sum;
+
+	public XSum() {
+	}
+
+	public XSum(RelationProvider relation, String columnName) {
+		setInput(relation,columnName);
+	}
 
 	public Aggregation setInput(RelationProvider relation, String columnName) {
         resetInput();
@@ -27,6 +33,7 @@ public class XSum extends AbstractAggregation implements Sum {
 	}
 
 	public Object aggregate() {
+		double sum =0d;
 		RowIterator iterator = relation.iterator();
 		while(iterator.hasNext()){
 			Row row = iterator.nextRow();
@@ -37,7 +44,7 @@ public class XSum extends AbstractAggregation implements Sum {
 	}
 
 	public void init() {
-		sum = 0d;
+
 	}
 
 	public static void main(String[] args) {

@@ -21,7 +21,7 @@ public class XTableScan extends AbstractOperation implements TableScan {
 
 	Relation result;
 
-	static final String dataDir="./data/1/";
+	static final String dataDir="./data/3/";
 
 	public XTableScan(String tableName) {
 		this.tableName = tableName;

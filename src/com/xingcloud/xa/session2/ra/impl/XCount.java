@@ -12,7 +12,14 @@ import com.xingcloud.xa.session2.ra.RowIterator;
  */
 public class XCount extends AbstractAggregation implements Count {
 	RelationProvider relation;
-	int count=0;
+
+	public XCount() {
+	}
+
+	public XCount(RelationProvider relation) {
+		setInput(relation);
+	}
+
 	public Aggregation setInput(RelationProvider relation) {
 		resetInput();
 		init();
@@ -22,6 +29,7 @@ public class XCount extends AbstractAggregation implements Count {
 	}
 
 	public Object aggregate() {
+		int count=0;
 		RowIterator iterator = relation.iterator();
 		while(iterator.hasNext()){
 			count++;
@@ -31,7 +39,7 @@ public class XCount extends AbstractAggregation implements Count {
 	}
 
 	public void init() {
-		count=0;
+
 	}
 
 	public static void main(String[] args) {

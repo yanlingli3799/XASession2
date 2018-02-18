@@ -81,13 +81,10 @@ public class XJoin extends AbstractOperation implements Join{
 
 					rows.add(row);
 				}else{
-					// 若同属性列值不同，则忽略
+					// 若同属性列值不同，则忽略，不放在 join 结果集里。
 				}
 			}
 		}
-
-		// todo:list里面的结果去重
-
 
 		return new XRelation(columnIndex, rows);
 	}

@@ -9,4 +9,5 @@ import java.util.Map;
 public interface Row {
 	Object get(int index);
 	Object get(String columnName);
+	Object[] get();
 }

@@ -1,0 +1,6 @@
+date	event	uid
+2013-02-01	visit	1
+2013-02-01	login	1
+2013-02-01	logout	1
+2013-02-02	visit	2
+2013-02-02	visit	2
