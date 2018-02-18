@@ -28,12 +28,19 @@ public class XTableScan extends AbstractOperation implements TableScan {
 	}
 
 	public Relation evaluate() {
+
+		List<String> lines = new ArrayList<>();// 存储曾经读到过的行，用于去重
+
+
+
 		if(result == null){
 			//读取 \t 分割的文本文件，生成一个XRelation
 			//文本文件头一行是列名；其余各行是relation中的行。
 			try {
 				BufferedReader reader = new BufferedReader(new FileReader(dataDir+tableName+".txt"));
 				String line = reader.readLine();
+				lines.add(line);
+
 				if(line == null){
 					return null;
 				}
@@ -44,6 +51,10 @@ public class XTableScan extends AbstractOperation implements TableScan {
 				}
 				List<Object[]> rows = new ArrayList<Object[]>();
 				for(line=reader.readLine();line!=null;line=reader.readLine()){
+					// 检查是否为重复行
+					if(lines.contains(line)){
+						continue;
+					}
 					Object[] row = new Object[columnNames.size()];
 					st = new StringTokenizer(line, "\t'");
 					int i = 0;
@@ -54,6 +65,7 @@ public class XTableScan extends AbstractOperation implements TableScan {
 					if(i==columnNames.size()){
 						rows.add(row);
 					}
+					lines.add(line);
 				}
 				Map<String, Integer> columnIndex = new TreeMap<String, Integer>();
 				for (int i = 0; i < columnNames.size(); i++) {
