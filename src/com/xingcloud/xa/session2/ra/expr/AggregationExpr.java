@@ -20,13 +20,13 @@ public class AggregationExpr implements Expression {
 
 
 	public Object evaluate(Row input) {
-		if(aggregation instanceof XCount){
-			System.out.println("是XCount");
-		}else if (aggregation instanceof XSum){
-			System.out.println("是XSum");
-		}else{
-			throw new IllegalArgumentException("不支持的aggregation"+aggregation);
-		}
+//		if(aggregation instanceof XCount){
+//			System.out.println("是XCount");
+//		}else if (aggregation instanceof XSum){
+//			System.out.println("是XSum");
+//		}else{
+//			throw new IllegalArgumentException("不支持的aggregation"+aggregation);
+//		}
 		return aggregation.aggregate();
 	}
 
