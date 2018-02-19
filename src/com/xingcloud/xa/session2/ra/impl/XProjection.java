@@ -21,97 +21,77 @@ public class XProjection extends AbstractOperation implements Projection{
 
 	public Relation evaluate() {
 
+		// 1.【from子句】扫表，得到一个初始 relation
+		// 2.【on子句】暂无
+		// 3.【join子句】暂时没看这段逻辑
+		// 4.【where子句】做where条件过滤.
+		// 5.【group by子句】暂无
+		// 6.【with子句】暂无
+		// 7.【having子句】暂无
+		// 8.【select子句】
+		// 9.【distinct子句】
+		// 10.【order by子句】
+
+		Relation originRelation;
+		XRelation result = null;
+
 
 		if(relation instanceof XSelection) {
-			Relation originRelation;
-			XRelation result = null;
-
-			// 1.【from子句】扫表，得到一个初始 relation
+			// 还有其他的计算
 			originRelation = ((XSelection)relation).evaluate();
-
-			if(projections.length<=0){
-				throw new IllegalArgumentException("参数错误，select 格式不正确");
-			}
-
-
-			// 2.【on子句】暂无
-			// 3.【join子句】暂时没看这段逻辑
-			// 4.【where子句】做where条件过滤.
-			// 5.【group by子句】暂无
-			// 6.【with子句】暂无
-			// 7.【having子句】暂无
-			// 8.【select子句】
-
-
-
-			if(projections[0] instanceof ColumnValue){
-				// 根据 projections 获取新的表头（列名索引）
-				Map<String,Integer> resultColumnIndex= new HashMap<>();
-				for(int i=0;i<projections.length;i++){
-					if(projections[i] instanceof ColumnValue){
-						resultColumnIndex.put(((ColumnValue)projections[i]).columnName, i);
-					}
-				}
-
-				// 迭代遍历每一行，生成单行数据，追加到新的 relation 行数据里面
-				List<Object[]> resultRows = new ArrayList<Object[]>();
-				RowIterator iterator = originRelation.iterator();
-				while(iterator.hasNext()){
-					Row row = iterator.nextRow();
-					Object[] resultRow = new Object[projections.length];
-					for(int i=0;i<projections.length;i++){
-						resultRow[i] = projections[i].evaluate(row);
-					}
-					resultRows.add(resultRow);
-				}
-
-				// 生成新的 relation 并返回结果
-				result = new XRelation(resultColumnIndex, resultRows);
-
-
-			}else if (projections[0] instanceof AggregationExpr){
-
-				// todo:XCount里面带的Distinct怎么处理？？
-				if(((AggregationExpr)projections[0]).aggregation instanceof XCount){
-
-//					System.out.println((AggregationExpr)projections[0]);
-//					System.out.println(((AggregationExpr)projections[0]).aggregation);
-//					System.out.println(((XCount) ((AggregationExpr)projections[0]).aggregation).relation);
-//					System.out.println(((XCount) ((AggregationExpr)projections[0]).aggregation).inputs);
-
-//					XCount xCount = new XCount(originRelation);
-					XCount xCount = new XCount(((XCount) ((AggregationExpr)projections[0]).aggregation).relation);
-					Map<String,Integer> map = new HashMap<>();
-					map.put(xCount.aggregate().toString(),0);
-					return new XRelation(map, new ArrayList<>());
-				}else if(((AggregationExpr)projections[0]).aggregation instanceof XSum){
-					XSum xSum = new XSum(originRelation,((XSum) ((AggregationExpr)projections[0]).aggregation).columnName);
-					Map<String,Integer> map = new HashMap<>();
-					map.put(xSum.aggregate().toString(),0);
-					return new XRelation(map, new ArrayList<>());
-				}
-
-
-			}else{
-				throw new IllegalArgumentException("不支持的projections[0]="+projections[0]);
-			}
-
-			// 9.【distinct子句】
-			// 10.【order by子句】
-
-
-
-			return result;
-
-
+		} else if(relation instanceof  XDistinct){
+			// 直接返回？？
+			return ((XDistinct)relation).evaluate();
+		} else if(relation instanceof XJoin){
+			return ((XJoin)relation).evaluate();
 		}else{
-			System.out.println("暂时先只管XSelection，relation="+relation);
+			throw new IllegalArgumentException("暂不支持："+relation.getClass());
+		}
+
+		if(projections.length<=0){
+			throw new IllegalArgumentException("参数错误，select 格式不正确");
 		}
 
 
 
+		if(projections[0] instanceof ColumnValue){
+			// 根据 projections 获取新的表头（列名索引）
+			Map<String,Integer> resultColumnIndex= new HashMap<>();
+			for(int i=0;i<projections.length;i++){
+				if(projections[i] instanceof ColumnValue){
+					resultColumnIndex.put(((ColumnValue)projections[i]).columnName, i);
+				}
+			}
 
-		return null;  //TODO method implementation
+			// 迭代遍历每一行，生成单行数据，追加到新的 relation 行数据里面
+			List<Object[]> resultRows = new ArrayList<Object[]>();
+			RowIterator iterator = originRelation.iterator();
+			while(iterator.hasNext()){
+				Row row = iterator.nextRow();
+				Object[] resultRow = new Object[projections.length];
+				for(int i=0;i<projections.length;i++){
+					resultRow[i] = projections[i].evaluate(row);
+				}
+				resultRows.add(resultRow);
+			}
+
+
+			// 生成新的 relation 并返回结果
+			result = new XRelation(resultColumnIndex, resultRows);
+
+
+		}else if (projections[0] instanceof AggregationExpr){
+
+			Object o = ((AggregationExpr)projections[0]).aggregation.aggregate();
+			Map<String,Integer> map = new HashMap<>();
+			map.put(o.toString(),0);
+			return new XRelation(map, new ArrayList<>());
+		}else{
+			throw new IllegalArgumentException("不支持的projections[0]="+projections[0]);
+		}
+
+		return result;
+
 	}
 
 	public Projection setInput(RelationProvider relation, Expression ... projections) {

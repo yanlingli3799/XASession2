@@ -7,6 +7,7 @@ import com.xingcloud.xa.session2.ra.Row;
 import com.xingcloud.xa.session2.ra.RowIterator;
 import com.xingcloud.xa.session2.ra.expr.Expression;
 
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,19 +21,33 @@ public class XDistinct extends AbstractOperation implements Distinct {
 	Expression[] expressions;
 
 	public Relation evaluate() {
+
+
 		if(relation instanceof XSelection){
-
-			// 1.把relation 结果计算出来
-			Relation result = ((XSelection) relation).evaluate();
-
-			// 2.todo:去重
-
-			throw new IllegalArgumentException("代码没写完");
-
+			relation = ((XSelection) relation).evaluate();
 		}else{
 			throw new IllegalArgumentException("XDistinct.relation 不支持："+relation.getClass());
 		}
-//		return null;  //TODO method implementation
+
+
+		List<String> distinct = new ArrayList<>();// 用于做 Distinct 去重
+		List<Object[]> resultRows = new ArrayList<Object[]>();
+
+		RowIterator rowIterator = relation.iterator();
+		while(rowIterator.hasNext()){
+			Row row = rowIterator.nextRow();
+
+			for (Expression expression : expressions) {
+				Object o = expression.evaluate(row).toString();
+				if (!distinct.contains(o.toString())) {
+					distinct.add(o.toString());
+					resultRows.add(row.get());
+				}
+			}
+		}
+
+		return new XRelation(relation.getColumnIndex(),resultRows);
+
 	}
 
 	public Distinct setInput(RelationProvider relation, Expression ... expressions ) {

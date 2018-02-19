@@ -30,22 +30,20 @@ public class XCount extends AbstractAggregation implements Count {
 
 	public Object aggregate() {
 
-		if(relation instanceof XSelection){
-			int count=0;
-			RowIterator iterator = relation.iterator();
-			while(iterator.hasNext()){
-				count++;
-				iterator.nextRow();
-			}
-			return count;
-		}else if(relation instanceof XDistinct){
-
-
-			return null;
-		}else{
-			throw new IllegalArgumentException("XCount 不支持："+relation.getClass());
+		if(relation instanceof XDistinct){
+			relation = ((XDistinct) relation).evaluate();
+		}else if(relation instanceof XGroup){
+			relation = ((XGroup) relation).evaluate();
 		}
 
+		int count=0;
+		RowIterator iterator = relation.iterator();
+		while(iterator.hasNext()){
+			count++;
+			iterator.nextRow();
+		}
+
+		return count;
 	}
 
 	public void init() {
@@ -59,8 +57,7 @@ public class XCount extends AbstractAggregation implements Count {
 	private static void test() {
 		Relation r = new XTableScan("user").evaluate();
 		System.out.println(r);
-		XCount count = new XCount();
-		count.setInput(r);
+		XCount count = new XCount(r);
 
 		System.out.println(count.aggregate());
 	}

@@ -9,6 +9,7 @@ import com.xingcloud.xa.session2.ra.expr.GreaterEqual;
 import com.xingcloud.xa.session2.ra.expr.Less;
 import com.xingcloud.xa.session2.ra.expr.LessEqual;
 import com.xingcloud.xa.session2.ra.expr.Not;
+import com.xingcloud.xa.session2.ra.expr.Or;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,8 @@ public class XSelection extends AbstractOperation implements Selection{
 				 || expression instanceof GreaterEqual
 				 || expression instanceof Less
 				 || expression instanceof LessEqual
-				 || expression instanceof And){
+				 || expression instanceof And
+				 || expression instanceof Or){
 				if((Boolean) expression.evaluate(row)){
 					rows.add(row.get());
 				}
