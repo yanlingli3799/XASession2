@@ -44,10 +44,8 @@ public class XProjection extends AbstractOperation implements Projection{
 			// 还有其他的计算，需要做 projections 条件过滤
 			originRelation = ((XSelection)relation).evaluate();
 		} else if(relation instanceof  XDistinct){
-			// todo:直接返回？？
 			return ((XDistinct)relation).evaluate();
 		} else if(relation instanceof XJoin){
-			// todo:join还没测试
 			return ((XJoin)relation).evaluate();
 		}else{
 			throw new IllegalArgumentException("暂不支持："+relation.getClass());
