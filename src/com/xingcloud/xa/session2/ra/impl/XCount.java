@@ -29,13 +29,23 @@ public class XCount extends AbstractAggregation implements Count {
 	}
 
 	public Object aggregate() {
-		int count=0;
-		RowIterator iterator = relation.iterator();
-		while(iterator.hasNext()){
-			count++;
-			iterator.nextRow();
+
+		if(relation instanceof XSelection){
+			int count=0;
+			RowIterator iterator = relation.iterator();
+			while(iterator.hasNext()){
+				count++;
+				iterator.nextRow();
+			}
+			return count;
+		}else if(relation instanceof XDistinct){
+
+
+			return null;
+		}else{
+			throw new IllegalArgumentException("XCount 不支持："+relation.getClass());
 		}
-		return count;
+
 	}
 
 	public void init() {

@@ -38,9 +38,9 @@ public class Tests {
 //		System.out.println(PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql4)));
 
 		System.out.println(PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql5)));// ok
-		System.out.println(PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql6)));// ok
-		System.out.println(PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql7)));// ok
-		System.out.println(PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql8)));// ok
+//		System.out.println(PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql6)));// ok
+//		System.out.println(PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql7)));// ok
+//		System.out.println(PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql8)));// ok
 //		System.out.println(PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql9)));
     }
 }
