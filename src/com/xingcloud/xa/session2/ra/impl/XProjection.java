@@ -32,29 +32,39 @@ public class XProjection extends AbstractOperation implements Projection{
 		// 9.【distinct子句】
 		// 10.【order by子句】
 
+		if(projections.length<=0){
+			throw new IllegalArgumentException("参数错误，select 格式不正确");
+		}
+
 		Relation originRelation;
 		XRelation result = null;
 
 
 		if(relation instanceof XSelection) {
-			// 还有其他的计算
+			// 还有其他的计算，需要做 projections 条件过滤
 			originRelation = ((XSelection)relation).evaluate();
 		} else if(relation instanceof  XDistinct){
-			// 直接返回？？
+			// todo:直接返回？？
 			return ((XDistinct)relation).evaluate();
 		} else if(relation instanceof XJoin){
+			// todo:join还没测试
 			return ((XJoin)relation).evaluate();
 		}else{
 			throw new IllegalArgumentException("暂不支持："+relation.getClass());
 		}
 
-		if(projections.length<=0){
-			throw new IllegalArgumentException("参数错误，select 格式不正确");
-		}
+
 
 
 
 		if(projections[0] instanceof ColumnValue){
+
+			// todo:select * 需要特殊处理？？
+			if(((ColumnValue)projections[0]).columnName.equals("*")){
+				return originRelation;
+			}
+
+
 			// 根据 projections 获取新的表头（列名索引）
 			Map<String,Integer> resultColumnIndex= new HashMap<>();
 			for(int i=0;i<projections.length;i++){
@@ -85,7 +95,7 @@ public class XProjection extends AbstractOperation implements Projection{
 			Object o = ((AggregationExpr)projections[0]).aggregation.aggregate();
 			Map<String,Integer> map = new HashMap<>();
 			map.put(o.toString(),0);
-			return new XRelation(map, new ArrayList<>());
+			result = new XRelation(map, new ArrayList<>());
 		}else{
 			throw new IllegalArgumentException("不支持的projections[0]="+projections[0]);
 		}

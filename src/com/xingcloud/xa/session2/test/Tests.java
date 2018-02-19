@@ -32,6 +32,10 @@ public class Tests {
 	public static String sql9 = "select sum(uid) from event where uid='1';";
 	public static String sql10 = "select count(distinct(uid)) from event where uid='1';";
 	public static String sql11 = "select distinct(uid) from event where uid='1';";
+	public static String sql12 = "select date,event,uid from event;";
+	public static String sql13 = "select * from event;";
+	public static String sql14 = "select * from (event NATURAL JOIN user);";
+	public static String sql15 = "select * from (event NATURAL JOIN user) where uid='1';";
 
 	public static void main(String[] args) throws JSQLParserException {
 //		System.out.println(PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql1)));
@@ -43,7 +47,7 @@ public class Tests {
 
 //		System.out.println("6=>\n" + "sql："+sql6 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql6)));// ok
 
-		System.out.println("7=>\n" + "sql："+sql7 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql7)));// ok
+//		System.out.println("7=>\n" + "sql："+sql7 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql7)));// ok
 
 //		System.out.println("8=>\n" + "sql："+sql8 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql8)));// ok
 
@@ -52,6 +56,14 @@ public class Tests {
 //		System.out.println("10=>\n" + "sql："+sql10 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql10)));// ok
 
 //		System.out.println("11=>\n" + "sql："+sql11 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql11)));// ok
+
+//		System.out.println("12=>\n" + "sql："+sql12 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql12)));// ok
+
+//		System.out.println("13=>\n" + "sql："+sql13 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql13)));// ok
+
+//		System.out.println("14=>\n" + "sql："+sql14 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql14)));// ok
+
+		System.out.println("15=>\n" + "sql："+sql15 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql15)));// ok
 
     }
 }

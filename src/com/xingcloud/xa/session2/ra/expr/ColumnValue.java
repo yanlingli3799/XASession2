@@ -23,6 +23,7 @@ public class ColumnValue implements Expression {
 
 	public Object evaluate(Row input) {
 
+		// 怎么支持select*？
 		Object ret = input.get(columnName);
 		if(null == ret){
 			throw new IllegalArgumentException("cannot find column:"+columnName);

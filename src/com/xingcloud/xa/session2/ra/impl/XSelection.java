@@ -2,6 +2,7 @@ package com.xingcloud.xa.session2.ra.impl;
 
 import com.xingcloud.xa.session2.ra.*;
 import com.xingcloud.xa.session2.ra.expr.And;
+import com.xingcloud.xa.session2.ra.expr.Between;
 import com.xingcloud.xa.session2.ra.expr.Equals;
 import com.xingcloud.xa.session2.ra.expr.Expression;
 import com.xingcloud.xa.session2.ra.expr.Greater;
@@ -52,12 +53,15 @@ public class XSelection extends AbstractOperation implements Selection{
 				 || expression instanceof Less
 				 || expression instanceof LessEqual
 				 || expression instanceof And
-				 || expression instanceof Or){
+				 || expression instanceof Or
+				 || expression instanceof Between){
 				if((Boolean) expression.evaluate(row)){
 					rows.add(row.get());
 				}
 			}else{
-				throw new IllegalArgumentException("XSelection 的 expression 不支持："+expression);
+
+				// todo: expression 可能为null，暂时直接跳过就行了
+				rows.add(row.get());
 			}
 		}
 
