@@ -19,6 +19,10 @@ public class XSum extends AbstractAggregation implements Sum {
 	public XSum() {
 	}
 
+	public void updateRelation(RelationProvider relation){
+		this.relation = relation;
+	}
+
 	public XSum(RelationProvider relation, String columnName) {
 		setInput(relation,columnName);
 	}

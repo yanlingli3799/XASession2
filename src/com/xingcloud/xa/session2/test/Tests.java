@@ -36,6 +36,7 @@ public class Tests {
 	public static String sql13 = "select * from event;";
 	public static String sql14 = "select * from (event NATURAL JOIN user);";
 	public static String sql15 = "select * from (event NATURAL JOIN user) where uid='1';";
+	public static String sql16 = "select uid,count(*) from event group by uid;";
 
 	public static void main(String[] args) throws JSQLParserException {
 //		System.out.println(PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql1)));
@@ -63,7 +64,9 @@ public class Tests {
 
 //		System.out.println("14=>\n" + "sql："+sql14 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql14)));// ok
 
-		System.out.println("15=>\n" + "sql："+sql15 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql15)));// ok
+//		System.out.println("15=>\n" + "sql："+sql15 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql15)));// ok
+
+		System.out.println("16=>\n" + "sql："+sql16 + "\n结果：\n"+PlanExecutor.executePlan(Parser.getInstance().parse(Tests.sql16)));// ok
 
     }
 }

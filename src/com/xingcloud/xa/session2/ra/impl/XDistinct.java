@@ -20,6 +20,10 @@ public class XDistinct extends AbstractOperation implements Distinct {
 	RelationProvider relation;
 	Expression[] expressions;
 
+	public void updateRelation(RelationProvider relation){
+		this.relation = relation;
+	}
+
 	public Relation evaluate() {
 
 

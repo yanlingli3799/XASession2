@@ -36,7 +36,7 @@ public class XProjection extends AbstractOperation implements Projection{
 			throw new IllegalArgumentException("参数错误，select 格式不正确");
 		}
 
-		Relation originRelation;
+		Relation originRelation = null;
 		XRelation result = null;
 
 
@@ -47,7 +47,7 @@ public class XProjection extends AbstractOperation implements Projection{
 			return ((XDistinct)relation).evaluate();
 		} else if(relation instanceof XJoin){
 			return ((XJoin)relation).evaluate();
-		}else{
+		} else{
 			throw new IllegalArgumentException("暂不支持："+relation.getClass());
 		}
 
