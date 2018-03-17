@@ -20,12 +20,9 @@ public class XCount extends AbstractAggregation implements Count {
 		setInput(relation);
 	}
 
-
+	// 把 relation 换一下
 	public void updateRelation(RelationProvider relation){
-		if(this.relation instanceof XDistinct){
-			((XDistinct)this.relation).updateRelation(relation);
-			((XDistinct)this.relation).result = null;
-		}
+		this.relation = relation;
 	}
 
 	public Aggregation setInput(RelationProvider relation) {

@@ -36,42 +36,16 @@ public class XGroup extends AbstractOperation implements Group {
 
 	public Relation evaluate() {
 
-		// TODO:检查，select 的列必须是 group 列的子集。
+		// TODO:检查，select 的列必须是 group 列的子集？？
 
-		if(relation instanceof XSelection){
-			relation = ((XSelection) relation).evaluate();
-		}else{
-			throw new IllegalArgumentException("XGroup.relation 不支持："+relation.getClass());
-		}
-
-		System.out.println("测试："+relation);
+//		if(relation instanceof XSelection){
+//			relation = ((XSelection) relation).evaluate();
+//		}else{
+//			throw new IllegalArgumentException("XGroup.relation 不支持："+relation.getClass());
+//		}
 
 
 		Map<String, Integer> columnIndex = new TreeMap<String, Integer>();
-
-//		// group rows
-//		Map<String, List<Row>> groupRows = new HashMap<String, List<Row>>();
-//		Map<String, Integer> _columnIndex = new TreeMap<String, Integer>();
-//		RowIterator iterator = relation.iterator();
-//		while (iterator.hasNext()){
-//			XRelation.XRow row = (XRelation.XRow)iterator.nextRow();
-//			_columnIndex = row.columnNames;
-//			String groupString = "";
-//			for(Expression expression:groupingExpressions){
-//				groupString += (String)expression.evaluate(row);
-//			}
-//
-//			if (!groupRows.containsKey(groupString)){
-//				groupRows.put(groupString,new ArrayList<Row>());
-//			}
-//
-//			groupRows.get(groupString).add(row);
-//		}
-//
-//		System.out.println("测试，groupRows="+groupRows.toString());
-//
-//
-
 
 		// 先按group by 分组
 		Map<String,List<Object[]>> groupRowsMap = new HashMap<>();
@@ -94,12 +68,6 @@ public class XGroup extends AbstractOperation implements Group {
 			groupRowsMap.get(groupKey).add(row.get());
 		}
 
-		System.out.println("测试，groupRowsMap="+groupRowsMap.toString());
-		System.out.println("测试，columnIndex="+columnIndex.toString());
-
-
-
-
 		Map<String, List<Object[]>> groupProjectionRows = new HashMap<String, List<Object[]>>();
 
 		// 分组遍历
@@ -115,7 +83,7 @@ public class XGroup extends AbstractOperation implements Group {
 			// 生成 relationProvider
 			RelationProvider relationProvider = new XRelation(columnIndex,rowList);
 
-			//reinput the aggregation expression's relation provider
+			// 聚合操作需要更新一下XCount、XSum、XDistinct里面的relation
 			for(Expression expression:projectionExpressions){
 				if(expression instanceof AggregationExpr){
 					Aggregation aggregation = ((AggregationExpr)expression).aggregation;
@@ -127,7 +95,7 @@ public class XGroup extends AbstractOperation implements Group {
 						((XDistinct)aggregation).setInput(relationProvider, ((XDistinct)aggregation).expressions);
 					}
 				}else if(expression instanceof ColumnValue){
-					// todo:
+					// 啥都不用管
 				}
 			}
 
@@ -136,78 +104,28 @@ public class XGroup extends AbstractOperation implements Group {
 			xProjection.setInput(relationProvider, projectionExpressions);
 			XRelation relation = (XRelation)xProjection.evaluate();
 			groupProjectionRows.get(groupString).addAll(relation.rows);
-
-
 		}
 
-		// combine each group result
+		// 结果集
 		List<Object[]> rows = new ArrayList<Object[]>();
 		for(Map.Entry<String, List<Object[]>> entry:groupProjectionRows.entrySet()){
 			rows.addAll(entry.getValue());
 		}
 
 
-		return new XRelation(columnIndex,rows);
+		// 结果标题
+		Map<String, Integer> resultColumnIndex = new TreeMap<String, Integer>();
 
+		int colNum=0;
+		for (Expression proj : projectionExpressions) {
+			StringBuilder sb = new StringBuilder();
+			InlinePrint.printExpression(proj, sb);
+			resultColumnIndex.put(sb.toString(), colNum);
+			colNum++;
+		}
 
-//		// 根据 projections 获取新的表头（列名索引）
-//		Map<String,Integer> resultColumnIndex= new HashMap<>();
-//		for(int i=0;i<projectionExpressions.length;i++){
-//			if(projectionExpressions[i] instanceof ColumnValue){
-//				resultColumnIndex.put(((ColumnValue)projectionExpressions[i]).columnName, i);
-//			}
-//		}
+		return new XRelation(resultColumnIndex,rows);
 
-//		System.out.println("测试，表头="+groupMap.toString());
-
-
-//		List<Relation> relations = new ArrayList<>();
-//		for (Map.Entry<String, List<Object[]>> entry : groupMap.entrySet()) {
-//			relations.add(new XRelation(relation.getColumnIndex(),entry.getValue()));
-//		}
-//
-
-//
-//		System.out.println("测试，relations="+relations.toString());
-//
-//
-//
-//
-//		for (Relation re : relations) {
-//			List<Object[]> resultRows = new ArrayList<Object[]>();
-//
-//			// 当前这一组，relation
-//			 iterator = re.iterator();
-//			while(iterator.hasNext()){
-//				Row row = iterator.nextRow();
-//				Object[] resultRow = new Object[projectionExpressions.length];
-//
-//				System.out.println("测试，projectionExpressions="+projectionExpressions.length);
-//
-//				for(int i=0;i<projectionExpressions.length;i++){
-//
-//					if(projectionExpressions[i] instanceof ColumnValue){
-//						resultRow[i] = projectionExpressions[i].evaluate(row);
-//					}else if(projectionExpressions[i] instanceof AggregationExpr){
-//
-//						Object o = ((AggregationExpr)projectionExpressions[i]).aggregation.aggregate();
-//
-//						resultRow[i] = o;
-//					}
-//				}
-//				resultRows.add(resultRow);
-//			}
-//
-//			System.out.println("测试，当前一组relation="+new XRelation(resultColumnIndex, resultRows));
-//			System.out.println("测试，当前一组projection="+new XProjection().setInput(re, groupingExpressions));
-//
-//		}
-//
-
-//		result = new XRelation(resultColumnIndex, resultRows);
-
-
-//		return null;  //TODO method implementation
 	}
 
     public Group setInput(RelationProvider relation, Expression[] groupingExpressions, Expression[] projectionExpressions) {
